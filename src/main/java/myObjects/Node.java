@@ -1,4 +1,5 @@
-package myObjects;//https://www.baeldung.com/java-circular-linked-list
+package myObjects;
+//https://www.baeldung.com/java-circular-linked-list
 //adjusted to make doubly-linked
 
 public class Node
