@@ -1,4 +1,4 @@
-package myObjects;
+package logic;
 
 public class Solver
 {

@@ -1,15 +1,13 @@
 package myObjects;
 
-import java.util.ArrayList;
-
 public class Clock implements Cloneable
 {
     private Node head = null;
     private Node tail = null;
-    private final ArrayList<Integer> originalNodeVals = new ArrayList<>();
-    private int curNumNodes = 0;
     private Node forHand;
     private Node backHand;
+    private int validNodes;
+    private boolean firstMove = true;
 
     //<editor-fold desc="Constructors">
     public Clock()
@@ -31,7 +29,6 @@ public class Clock implements Cloneable
     {
         for (int num : nums)
         {
-            originalNodeVals.add(num);
             addNode(num);
         }
         forHand = head;
@@ -42,7 +39,7 @@ public class Clock implements Cloneable
     //<editor-fold desc="Node manipulation">
     public void addNode(int value)
     {
-        Node newNode = new Node(value, curNumNodes++);
+        Node newNode = new Node(value);
 
         if (head == null)
         {
@@ -50,6 +47,8 @@ public class Clock implements Cloneable
             tail = newNode;
             head.setNextNode(tail);
             tail.setPrevNode(head);
+            forHand = newNode;
+            backHand = newNode;
         }
         else
         {
@@ -62,84 +61,33 @@ public class Clock implements Cloneable
         head.setPrevNode(tail);
     }
 
-    public boolean deleteNode(int posToDelete)
+    public boolean deleteNode(Node nodeToDelete)
     {
-        Node currentNode = head;
         boolean success = false;
 
-        if (posToDelete == -1)
-            System.out.println("Cannot delete non-existent node");
-        else if (head != null)
+        if(nodeToDelete != null)
         {
-            if (currentNode.getPosFrom12() == posToDelete)
-            {
-                head = head.getNextNode();
-                tail.setNextNode(head);
-                head.setPrevNode(tail);
-                resetPosFrom12();
-                success = true;
-            }
-            else if (tail.getPosFrom12() == posToDelete)
-            {
-                tail = tail.getPrevNode();
-                tail.setNextNode(head);
-                head.setPrevNode(tail);
-                resetPosFrom12();
-                success = true;
-            }
-            else
-            {
-                do
-                {
-                    Node nextNode = currentNode.getNextNode();
-                    if (nextNode.getPosFrom12() == posToDelete)
-                    {
-                        currentNode.setNextNode(nextNode.getNextNode());
-                        resetPosFrom12();
-                        success = true;
-                        break;
-                    }
-                    currentNode = currentNode.getNextNode();
-                }
-                while (currentNode != head);
-            }
+            nodeToDelete.setValid(false);
+            validNodes--;
+            success = true;
         }
+        else
+            System.out.println("Node does not exist.");
 
         return success;
     }
 
-    private void resetPosFrom12()
-    {
-        Node curNode = head;
-        int numNodes = 0;
-        try
-        {
-            curNode.setPosFrom12(numNodes++);
-            while (curNode.getNextNode() != head)
-            {
-                curNode = curNode.getNextNode();
-                curNode.setPosFrom12(numNodes++);
-            }
-        }
-        catch (NullPointerException e)
-        {
-            if (head == null)
-                System.out.println("Empty Clock");
-            else
-                System.out.println("Clock repositioning error");
-        }
-    }
-
     private void resetClock()
     {
-        for(int i = 0; i < curNumNodes; i++)
+        Node curNode = head;
+        validNodes = 0;
+        curNode.setValid(true);
+        validNodes++;
+        while(curNode.getNextNode() != head)
         {
-            deleteNode(i);
-        }
-
-        for (Integer originalNodeVal : originalNodeVals)
-        {
-            addNode(originalNodeVal);
+            curNode = curNode.getNextNode();
+            curNode.setValid(true);
+            validNodes++;
         }
     }
     //</editor-fold>
@@ -171,45 +119,76 @@ public class Clock implements Cloneable
     //<editor-fold desc = "Hand Movers">
     public void moveForHand(int move)
     {
-        this.forHand = findNodeByPos((forHand.getPosFrom12() + move) % curNumNodes);
+        for(int i = 0; i < move; i++)
+            forHand = forHand.getNextNode();
     }
 
     public void moveBackHand(int move)
     {
-        this.backHand = findNodeByPos((backHand.getPosFrom12() + curNumNodes - move) % curNumNodes);
+        for(int i = 0; i < move; i++)
+            backHand = backHand.getPrevNode();
     }
     //</editor-fold>
 
-    //<editor-fold desc = "Finders">
-    public int findNodePosByValue(int searchValue)
+    //<editor-fold desc = "Functions">
+    public boolean chooseNode(int position)
     {
-        Node currentNode = head;
-        int pos = -1;
+        boolean pointedNode = false;
+        boolean success = false;
+        Node chosenNode = findNodeByPos(position);
 
-        if (head != null)
+        if(!firstMove)
         {
-            do
-            {
-                if (currentNode.getValue() == searchValue)
-                {
-                    pos = currentNode.getPosFrom12();
-                    break;
-                }
-                currentNode = currentNode.getNextNode();
-            }
-            while (currentNode != head);
+            if(forHand == chosenNode || backHand == chosenNode)
+                pointedNode = true;
+        }
+        else
+        {
+            firstMove = false;
+            pointedNode = true; //Not technically true, but works fine with logic
         }
 
-        return pos;
+        if(pointedNode)
+        {
+            if (chosenNode.isValid())
+            {
+                success = deleteNode(chosenNode);
+                if (validNodes == 0)
+                {
+                    System.out.println("Puzzle Solved!");
+                }
+                else
+                {
+                    forHand = chosenNode;
+                    backHand = chosenNode;
+                    moveForHand(chosenNode.getValue());
+                    moveBackHand(chosenNode.getValue());
+                }
+            }
+            else
+            {
+                System.out.println("Not a valid node.");
+
+                if (!forHand.isValid() && !backHand.isValid())
+                {
+                    System.out.println("Game over. Restart.");
+                    resetClock();
+                }
+            }
+        }
+        else
+            System.out.println("Please choose a node being pointed at.");
+
+        return success;
     }
 
-    public Node findNodeByPos(int posValue)
+    public Node findNodeByPos(int position)
     {
         Node curNode = head;
 
         try
         {
-            for (int i = 0; i < posValue; i++)
+            for (int i = 0; i < position; i++)
             {
                 curNode = curNode.getNextNode();
             }
@@ -225,24 +204,23 @@ public class Clock implements Cloneable
     //</editor-fold>
 
     //<editor-fold desc="Other Standard Methods">
-    public boolean equals(Object otherObject)
-    {
-        boolean equals = false;
-        if (otherObject != null)
-            if (otherObject.getClass().equals(this.getClass()))
-            {
-                ArrayList<Integer> thisValues = this.originalNodeVals;
-                ArrayList<Integer> otherValues = ((Clock) otherObject).originalNodeVals;
-                equals = thisValues.equals(otherValues);
-            }
-
-        return equals;
-    }
+//    public boolean equals(Object otherObject)
+//    {
+//        boolean equals = false;
+//        if (otherObject != null)
+//            if (otherObject.getClass().equals(this.getClass()))
+//            {
+//                ArrayList<Integer> otherValues = ((Clock) otherObject).originalNodeVals;
+//                equals = this.originalNodeVals.equals(otherValues);
+//            }
+//
+//        return equals;
+//    }
 
     public String toString()
     {
         StringBuilder output = new StringBuilder();
-        StringBuilder pos = new StringBuilder();
+        //StringBuilder pos = new StringBuilder();
         output.append("Head: ").append(head.getValue()).append("\n");
         output.append("Tail: ").append(tail.getValue()).append("\n");
 
@@ -251,15 +229,15 @@ public class Clock implements Cloneable
         try
         {
             output.append(head.getValue());
-            pos.append(head.getPosFrom12());
+            //pos.append(head.getPosFrom12());
             while (curNode.getNextNode() != head)
             {
                 curNode = curNode.getNextNode();
                 output.append(", ").append(curNode.getValue());
-                pos.append(", ").append(curNode.getPosFrom12());
+                //pos.append(", ").append(curNode.getPosFrom12());
             }
 
-            output.append("\nPosition from 12: ").append(pos.toString());
+            //output.append("\nPosition from 12: ").append(pos.toString());
         }
         catch (NullPointerException e)
         {
