@@ -1,3 +1,4 @@
+import logic.Solver;
 import myObjects.Clock;
 
 public class Main
@@ -6,6 +7,16 @@ public class Main
     {
         Clock clock = new Clock();
         System.out.println(clock.toString());
+
+        Solver solver = new Solver(clock);
+        solver.dfs(0);
+        solver.dfs(1);
+        solver.dfs(2);
+        solver.dfs(3);
+        solver.dfs(4);
+        solver.dfs(5);
+        solver.dfs(6);
+        solver.dfs(7);
 //        System.out.println("Backwards: ");
 //        System.out.println(clock.backwardsString());
 

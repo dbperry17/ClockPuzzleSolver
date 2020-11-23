@@ -1,13 +1,12 @@
 package myObjects;
 
+import java.util.*;
+
 public class Clock implements Cloneable
 {
-    private Node head = null;
-    private Node tail = null;
-    private Node forHand;
-    private Node backHand;
-    private int validNodes;
-    private boolean firstMove = true;
+    private final ArrayList<Node> nodeList = new ArrayList<>();
+    private Map<Integer, List<Integer>> adjNodes = new HashMap<>();
+    private Node root;
 
     //<editor-fold desc="Constructors">
     public Clock()
@@ -27,224 +26,117 @@ public class Clock implements Cloneable
 
     public Clock(Integer... nums)
     {
-        for (int num : nums)
-        {
-            addNode(num);
-        }
-        forHand = head;
-        backHand = head;
-    }
-    //</editor-fold>
-
-    //<editor-fold desc="Node manipulation">
-    public void addNode(int value)
-    {
-        Node newNode = new Node(value);
-
-        if (head == null)
-        {
-            head = newNode;
-            tail = newNode;
-            head.setNextNode(tail);
-            tail.setPrevNode(head);
-            forHand = newNode;
-            backHand = newNode;
-        }
-        else
-        {
-            tail.setNextNode(newNode);
-            tail.getNextNode().setPrevNode(tail);
-        }
-
-        tail = newNode;
-        tail.setNextNode(head);
-        head.setPrevNode(tail);
-    }
-
-    public boolean deleteNode(Node nodeToDelete)
-    {
-        boolean success = false;
-
-        if(nodeToDelete != null)
-        {
-            nodeToDelete.setValid(false);
-            validNodes--;
-            success = true;
-        }
-        else
-            System.out.println("Node does not exist.");
-
-        return success;
-    }
-
-    private void resetClock()
-    {
-        Node curNode = head;
-        validNodes = 0;
-        curNode.setValid(true);
-        validNodes++;
-        while(curNode.getNextNode() != head)
-        {
-            curNode = curNode.getNextNode();
-            curNode.setValid(true);
-            validNodes++;
-        }
-    }
-    //</editor-fold>
-
-    //<editor-fold desc="Getters">
-    public Node getForHand()
-    {
-        return forHand;
-    }
-
-    public Node getBackHand()
-    {
-        return backHand;
-    }
-    //</editor-fold>
-
-    //<editor-fold desc = "Setters">
-    public void setForHand(int newPos)
-    {
-        this.forHand = findNodeByPos(newPos);
-    }
-
-    public void setBackHand(int newPos)
-    {
-        this.backHand = findNodeByPos(newPos);
-    }
-    //</editor-fold>
-
-    //<editor-fold desc = "Hand Movers">
-    public void moveForHand(int move)
-    {
-        for(int i = 0; i < move; i++)
-            forHand = forHand.getNextNode();
-    }
-
-    public void moveBackHand(int move)
-    {
-        for(int i = 0; i < move; i++)
-            backHand = backHand.getPrevNode();
+        resetClock(nums);
     }
     //</editor-fold>
 
     //<editor-fold desc = "Functions">
-    public boolean chooseNode(int position)
+    private void addNode(int value)
     {
-        boolean pointedNode = false;
-        boolean success = false;
-        Node chosenNode = findNodeByPos(position);
-
-        if(!firstMove)
-        {
-            if(forHand == chosenNode || backHand == chosenNode)
-                pointedNode = true;
-        }
-        else
-        {
-            firstMove = false;
-            pointedNode = true; //Not technically true, but works fine with logic
-        }
-
-        if(pointedNode)
-        {
-            if (chosenNode.isValid())
-            {
-                success = deleteNode(chosenNode);
-                if (validNodes == 0)
-                {
-                    System.out.println("Puzzle Solved!");
-                }
-                else
-                {
-                    forHand = chosenNode;
-                    backHand = chosenNode;
-                    moveForHand(chosenNode.getValue());
-                    moveBackHand(chosenNode.getValue());
-                }
-            }
-            else
-            {
-                System.out.println("Not a valid node.");
-
-                if (!forHand.isValid() && !backHand.isValid())
-                {
-                    System.out.println("Game over. Restart.");
-                    resetClock();
-                }
-            }
-        }
-        else
-            System.out.println("Please choose a node being pointed at.");
-
-        return success;
+        int curIndex =  nodeList.size(); //Starts at zero because we do this before adding elements
+        Node newNode = new Node(value);
+        newNode.setPosFrom12(curIndex);
+        nodeList.add(newNode);
+        adjNodes.putIfAbsent(newNode.getPosFrom12(), new ArrayList<>());
     }
 
-    public Node findNodeByPos(int position)
+    private void addEdge(int src, int dest)
     {
-        Node curNode = head;
+        adjNodes.get(src).add(dest);
+    }
+
+    private void resetClock(Integer... nums)
+    {
+        nodeList.clear();
+        for (int num : nums)
+            addNode(num);
+
+        root = nodeList.get(0);
+        if (createLinks())
+        {
+            System.out.println("Clock created");
+        }
+    }
+
+    private boolean createLinks()
+    {
+        int numNodes = nodeList.size();
+        int i = 0;
+        Boolean[] success = new Boolean[numNodes];
 
         try
         {
-            for (int i = 0; i < position; i++)
+            for (var node : nodeList)
             {
-                curNode = curNode.getNextNode();
+                int backInt = (i + numNodes - node.getValue()) % numNodes;
+                int forInt = (i + node.getValue()) % numNodes;
+                node.setBackwardNode(nodeList.get(backInt));
+                node.setForwardNode(nodeList.get(forInt));
+                addEdge(node.getPosFrom12(), node.getBackwardNode().getPosFrom12());
+                addEdge(node.getPosFrom12(), node.getForwardNode().getPosFrom12());
+                success[i] = true;
+                i++;
             }
         }
-        catch (NullPointerException e)
+        catch (Exception e)
         {
-            if (head == null)
-                System.out.println("Empty Clock");
+            System.out.println("Not a clock.");
+            success[i] = false;
         }
 
-        return curNode;
+        /*
+        Formula for forward hand and back hand:
+        Backward:
+        1 -> 6
+        1 + 8 - 3 = 6 % 8 = 1
+        (pos + numNodes - value) % numNodes
+
+        4 -> 1
+        4 + 8 - 3 = 9 % 8 = 1
+
+        forward:
+        1 -> 4
+        (1 + 3) % 8 = 4
+        (pos + value) % numNodes
+
+        7 -> 0
+        (7 + 1) % 8 = 0
+        */
+
+        return !(Arrays.asList(success).contains(false));
     }
     //</editor-fold>
 
-    //<editor-fold desc="Other Standard Methods">
-//    public boolean equals(Object otherObject)
-//    {
-//        boolean equals = false;
-//        if (otherObject != null)
-//            if (otherObject.getClass().equals(this.getClass()))
-//            {
-//                ArrayList<Integer> otherValues = ((Clock) otherObject).originalNodeVals;
-//                equals = this.originalNodeVals.equals(otherValues);
-//            }
-//
-//        return equals;
-//    }
+    //<editor-fold desc="Getters">
+    public ArrayList<Node> getNodeList()
+    {
+        return nodeList;
+    }
 
+    public Node getRoot()
+    {
+        return root;
+    }
+
+    public Map<Integer, List<Integer>> getAdjNodes()
+    {
+        return adjNodes;
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="Other Standard Methods">
     public String toString()
     {
         StringBuilder output = new StringBuilder();
-        //StringBuilder pos = new StringBuilder();
-        output.append("Head: ").append(head.getValue()).append("\n");
-        output.append("Tail: ").append(tail.getValue()).append("\n");
+        output.append("12 position: ").append(root.getValue()).append("\n");
+        output.append("Last position: ").append(nodeList.get(nodeList.size() - 1).getValue()).append("\n");
 
-
-        Node curNode = head;
-        try
+        output.append(root.getValue());
+        for(var node : nodeList)
         {
-            output.append(head.getValue());
-            //pos.append(head.getPosFrom12());
-            while (curNode.getNextNode() != head)
-            {
-                curNode = curNode.getNextNode();
-                output.append(", ").append(curNode.getValue());
-                //pos.append(", ").append(curNode.getPosFrom12());
-            }
-
-            //output.append("\nPosition from 12: ").append(pos.toString());
-        }
-        catch (NullPointerException e)
-        {
-            if (head == null)
-                output.append("Empty Clock");
-            else
-                output.insert(0, "Clock error. Current Order: \n\t");
+            if (!node.equals(root))
+                output.append(", ").append(node.getValue());
         }
 
         return output.toString();
