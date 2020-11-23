@@ -5,11 +5,9 @@ package myObjects;
 public class Node
 {
     private int value;
-    //private int posFrom12;
-    private Node nextNode;
-    private Node prevNode;
-    private boolean valid = true;
-
+    private int posFrom12; //To avoid time loss from constantly searching for index of a node in Clock
+    private Node forwardNode;
+    private Node backwardNode;
     public Node(int value) {
         this.value = value;
         //this.posFrom12 = pos;
@@ -20,25 +18,20 @@ public class Node
     {
         return value;
     }
-    //Might only be used for debugging purposes
 
-//    public int getPosFrom12()
-//    {
-//        return posFrom12;
-//    }
-    public Node getPrevNode()
+    public int getPosFrom12()
     {
-        return prevNode;
+        return posFrom12;
     }
 
-    public Node getNextNode()
+    public Node getBackwardNode()
     {
-        return nextNode;
+        return backwardNode;
     }
 
-    public boolean isValid()
+    public Node getForwardNode()
     {
-        return valid;
+        return forwardNode;
     }
 
     //</editor-fold>
@@ -49,24 +42,19 @@ public class Node
         this.value = value;
     }
 
-//    public void setPosFrom12(int newPos)
-//    {
-//        posFrom12 = newPos;
-//    }
-
-    public void setNextNode(Node nextNode)
+    public void setPosFrom12(int pos)
     {
-        this.nextNode = nextNode;
+        this.posFrom12 = pos;
     }
 
-    public void setPrevNode(Node prevNode)
+    public void setForwardNode(Node forwardNode)
     {
-        this.prevNode = prevNode;
+        this.forwardNode = forwardNode;
     }
 
-    public void setValid(boolean valid)
+    public void setBackwardNode(Node backwardNode)
     {
-        this.valid = valid;
+        this.backwardNode = backwardNode;
     }
     //</editor-fold>
 }
