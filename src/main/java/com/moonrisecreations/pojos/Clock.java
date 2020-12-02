@@ -1,6 +1,10 @@
-package myObjects;
+package com.moonrisecreations.pojos;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Clock implements Cloneable
 {
@@ -8,7 +12,9 @@ public class Clock implements Cloneable
     private Map<Integer, List<Integer>> adjNodes = new HashMap<>();
     private Node root;
 
-    //<editor-fold desc="Constructors">
+    /* * * * * * * * *
+     *  CONSTRUCTORS *
+     * * * * * * * * */
     public Clock()
     {
         this(3, 3, 2, 1, 3, 1, 1, 1);
@@ -28,9 +34,11 @@ public class Clock implements Cloneable
     {
         resetClock(nums);
     }
-    //</editor-fold>
 
-    //<editor-fold desc = "Functions">
+
+    /* * * * * * *
+     * FUNCTIONS *
+     * * * * * * */
     private void addNode(int value)
     {
         int curIndex =  nodeList.size(); //Starts at zero because we do this before adding elements
@@ -105,9 +113,11 @@ public class Clock implements Cloneable
 
         return !(Arrays.asList(success).contains(false));
     }
-    //</editor-fold>
 
-    //<editor-fold desc="Getters">
+
+    /* * * * * *
+     * GETTERS *
+     * * * * * */
     public ArrayList<Node> getNodeList()
     {
         return nodeList;
@@ -123,9 +133,10 @@ public class Clock implements Cloneable
         return adjNodes;
     }
 
-    //</editor-fold>
 
-    //<editor-fold desc="Other Standard Methods">
+    /* * * * * * * * * * * * * *
+     * OTHER STANDARD METHODS  *
+     * * * * * * * * * * * * * */
     public String toString()
     {
         StringBuilder output = new StringBuilder();
@@ -141,5 +152,5 @@ public class Clock implements Cloneable
 
         return output.toString();
     }
-    //</editor-fold>
 }
+

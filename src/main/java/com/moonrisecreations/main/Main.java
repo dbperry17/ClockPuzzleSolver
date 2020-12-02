@@ -1,5 +1,7 @@
-import logic.Solver;
-import myObjects.Clock;
+package com.moonrisecreations.main;
+
+import com.moonrisecreations.logic.Solver;
+import com.moonrisecreations.pojos.Clock;
 
 public class Main
 {
@@ -7,6 +9,7 @@ public class Main
     {
         Clock clock = new Clock();
         System.out.println(clock.toString());
+        
 
         Solver solver = new Solver(clock);
         solver.dfs(0);
@@ -19,7 +22,6 @@ public class Main
         solver.dfs(7);
 //        System.out.println("Backwards: ");
 //        System.out.println(clock.backwardsString());
-
 //        System.out.println("Checking link from head to tail: " + clock.getHead().getPrevNode().getValue());
 //        System.out.println("Checking link from tail to head: " + clock.getTail().getNextNode().getValue());
     }

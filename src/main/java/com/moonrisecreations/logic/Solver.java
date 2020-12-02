@@ -1,7 +1,7 @@
-package logic;
+package com.moonrisecreations.logic;
 
-import myObjects.Clock;
-import myObjects.Node;
+import com.moonrisecreations.pojos.Clock;
+import com.moonrisecreations.pojos.Node;
 
 //https://www.baeldung.com/java-depth-first-search
 public class Solver
