@@ -30,11 +30,6 @@ public class Clock implements Cloneable
 //        addNode(46);
     }
 
-    public Clock(int[] nums)
-    {
-        resetClock((nums);
-    }
-
     public Clock(Integer... nums)
     {
         resetClock(nums);
