@@ -8,4 +8,4 @@ If there weren't a time limit, I'd probably solve them myself manually, but sinc
 
 The solver on the website does everything I need it to, I just want to see if I can recreate it.
 
-Please note that this project is currently incomplete, and it is only public for the purpose of letting friends/potential employers see what I work on.
+Please note that this project is currently incomplete, and it is only public for the purpose of letting friends/potential employers see what I work on. If you attempt to use or fork this and have issues, I cannot help you.
