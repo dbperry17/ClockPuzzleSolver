@@ -1,62 +1,64 @@
 package com.moonrisecreations.clockpuzzlesolver.pojos;
 //https://www.baeldung.com/java-circular-linked-list
+
 //adjusted to make doubly-linked
 
 public class Node
 {
-  private int value;
-  private int posFrom12; //To avoid time loss from constantly searching for index of a node in Clock
-  private Node forwardNode;
-  private Node backwardNode;
-  public Node(int value) {
-      this.value = value;
-      //this.posFrom12 = pos;
-  }
+    private int value;
+    private int posFrom12; // To avoid time loss from constantly searching for index of a node in Clock
+    private Node forwardNode;
+    private Node backwardNode;
 
-  /* * * * * *
-   * GETTERS *
-   * * * * * */
-  public int getValue()
-  {
-      return value;
-  }
+    public Node(int value)
+    {
+        this.value = value;
+        // this.posFrom12 = pos;
+    }
 
-  public int getPosFrom12()
-  {
-      return posFrom12;
-  }
+    /*
+     * * * * * * GETTERS * * * * *
+     */
+    public int getValue()
+    {
+        return value;
+    }
 
-  public Node getBackwardNode()
-  {
-      return backwardNode;
-  }
+    public int getPosFrom12()
+    {
+        return posFrom12;
+    }
 
-  public Node getForwardNode()
-  {
-      return forwardNode;
-  }
+    public Node getBackwardNode()
+    {
+        return backwardNode;
+    }
 
-  
-  /* * * * * *
-   * SETTERS *
-   * * * * * */
-  public void setValue(int value)
-  {
-      this.value = value;
-  }
+    public Node getForwardNode()
+    {
+        return forwardNode;
+    }
 
-  public void setPosFrom12(int pos)
-  {
-      this.posFrom12 = pos;
-  }
+    /*
+     * * * * * * SETTERS * * * * *
+     */
+    public void setValue(int value)
+    {
+        this.value = value;
+    }
 
-  public void setForwardNode(Node forwardNode)
-  {
-      this.forwardNode = forwardNode;
-  }
+    public void setPosFrom12(int pos)
+    {
+        this.posFrom12 = pos;
+    }
 
-  public void setBackwardNode(Node backwardNode)
-  {
-      this.backwardNode = backwardNode;
-  }
+    public void setForwardNode(Node forwardNode)
+    {
+        this.forwardNode = forwardNode;
+    }
+
+    public void setBackwardNode(Node backwardNode)
+    {
+        this.backwardNode = backwardNode;
+    }
 }

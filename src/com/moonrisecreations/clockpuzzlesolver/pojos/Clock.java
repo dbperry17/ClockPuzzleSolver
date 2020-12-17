@@ -30,9 +30,17 @@ public class Clock implements Cloneable
 //        addNode(46);
     }
 
+    public Clock(ArrayList<Integer> nums)
+    {
+        if (nums != null)
+            resetClock(nums);
+        else
+            System.out.println("Null List");
+    }
+
     public Clock(Integer... nums)
     {
-        resetClock(nums);
+        this((ArrayList<Integer>) Arrays.asList(nums));
     }
 
     /*
@@ -52,17 +60,22 @@ public class Clock implements Cloneable
         adjNodes.get(src).add(dest);
     }
 
-    private void resetClock(Integer... nums)
+    private void resetClock(ArrayList<Integer> nums)
     {
         nodeList.clear();
-        for (int num : nums)
-            addNode(num);
-
-        root = nodeList.get(0);
-        if (createLinks())
+        if (nums.size() != 0)
         {
-            System.out.println("Clock created");
+            for (int num : nums)
+                addNode(num);
+
+            root = nodeList.get(0);
+            if (createLinks())
+            {
+                System.out.println("Clock created");
+            }
         }
+        else
+            System.out.println("no elements");
     }
 
     private boolean createLinks()

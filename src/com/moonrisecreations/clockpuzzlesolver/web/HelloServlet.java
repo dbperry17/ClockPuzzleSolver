@@ -2,7 +2,7 @@ package com.moonrisecreations.clockpuzzlesolver.web;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Arrays;
+import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -35,19 +35,28 @@ public class HelloServlet extends HttpServlet
      */
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {
-        String clockNums = request.getParameter("clockNums");
-        Clock clock = new Clock((Integer[]) formatInput(clockNums));
+        String[] clockStr = request.getParameterValues("jsArray");
+        System.out.println("Test: " + clockStr);
+        ArrayList<Integer> clockNums = formatInput(clockStr);
+        Clock clock = new Clock(clockNums);
         PrintWriter writer = response.getWriter();
-        writer.println("<h1>Hello, and welcome to the Clock Puzzle Solver. Your numbers are: " + clockNums + "</h1>");
+        writer.println("<h1>Hello, and welcome to the Clock Puzzle Solver. Your numbers are: " + clock.getNodeList()
+                + "</h1>");
         writer.close();
     }
 
-    private Integer[] formatInput(String str)
+    private ArrayList<Integer> formatInput(String[] strArr)
     {
-        StringBuilder formatted = new StringBuilder(str);
+        ArrayList<Integer> intArr = new ArrayList<Integer>();
+        if (strArr == null)
+            System.out.println("Didn't work");
+        else
+        {
+            for (String str : strArr)
+                intArr.add(Integer.parseInt(str));
+        }
 
-        int[] intArr = Arrays.stream((formatted.toString()).split(" ")).mapToInt(Integer::parseInt).toArray();
-        return Arrays.stream(intArr).boxed().toArray(Integer[]::new);
+        return intArr;
     }
 
 }
