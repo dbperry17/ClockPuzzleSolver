@@ -18,4 +18,4 @@ The pure Java part works perfectly and solves the problem just fine.
 
 Unfortunately, I rather belatedly realized that this type of project isn't even one that needs to interact with a server, and it would be much more appropriate to solve the problem with JavaScript, rather than sending information to the server.
 
-Additionally, I got in a bit over my head with the non-Java portion, and I need to first work on a simpler project to learn how to deal with jQuery, sending information to/from the server, etc., if I wish to complete this as I originally intended.
+As this is not the type of project meant for this type of work, I am temporarily shelving it for now.
